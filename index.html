@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EIOP – Enterprise Integration Orchestration Platform</title>
+  <meta name="description" content="AI-powered Enterprise Integration Orchestration Platform – parse requirements, manage adapters, auto-configure, and simulate integrations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="13" stroke="url(#brandGrad)" stroke-width="2"/>
+          <path d="M8 14h12M14 8v12" stroke="url(#brandGrad)" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="3" fill="url(#brandGrad)"/>
+          <defs>
+            <linearGradient id="brandGrad" x1="0" y1="0" x2="28" y2="28">
+              <stop stop-color="#6366f1"/>
+              <stop offset="1" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">EIOP</span>
+        <span class="brand-sub">Orchestration Platform</span>
+      </div>
+    </div>
+
+    <div class="nav-section-label">Modules</div>
+    <ul class="nav-list">
+      <li class="nav-item active" data-module="dashboard" id="nav-dashboard">
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label">Dashboard</span>
+        <span class="nav-badge live">Live</span>
+      </li>
+      <li class="nav-item" data-module="parser" id="nav-parser">
+        <span class="nav-icon">🧠</span>
+        <span class="nav-label">Requirement Parser</span>
+      </li>
+      <li class="nav-item" data-module="registry" id="nav-registry">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">Integration Registry</span>
+      </li>
+      <li class="nav-item" data-module="autoconfig" id="nav-autoconfig">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Auto-Configuration</span>
+      </li>
+      <li class="nav-item" data-module="simulation" id="nav-simulation">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Simulation & Testing</span>
+      </li>
+    </ul>
+
+    <div class="nav-section-label">System</div>
+    <ul class="nav-list">
+      <li class="nav-item" data-module="logs" id="nav-logs">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Audit Logs</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <div class="status-dot pulse"></div>
+        <span>All systems operational</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <!-- Top Header Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">☰</button>
+        <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search adapters, endpoints..." id="globalSearch" />
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-icon" title="Notifications" id="notifBtn">🔔<span class="notif-badge">3</span></button>
+          <div class="user-avatar">AI</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Module Views -->
+    <div class="module-container">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section class="module active" id="module-dashboard">
+        <div class="module-header">
+          <h1 class="module-title">Integration Orchestration <span class="highlight">Dashboard</span></h1>
+          <p class="module-subtitle">Real-time overview of your integration ecosystem</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card" data-color="indigo">
+            <div class="stat-icon">📄</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statDocs">0</div>
+              <div class="stat-label">Documents Parsed</div>
+              <div class="stat-trend up">↑ 12% this week</div>
+            </div>
+          </div>
+          <div class="stat-card" data-color="cyan">
+            <div class="stat-icon">🔌</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAdapters">0</div>
+              <div class="stat-label">Active Adapters</div>
+              <div class="stat-trend up">↑ 3 new</div>
+            </div>
+          </div>
+          <div class="stat-card" data-color="violet">
+            <div class="stat-icon">⚙️</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statConfigs">0</div>
+              <div class="stat-label">Auto-Configs Generated</div>
+              <div class="stat-trend up">↑ 8% accuracy</div>
+            </div>
+          </div>
+          <div class="stat-card" data-color="emerald">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statTests">0</div>
+              <div class="stat-label">Simulations Run</div>
+              <div class="stat-trend up">97.3% pass rate</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card pipeline-card">
+            <div class="card-header">
+              <h3>Integration Pipeline</h3>
+              <span class="badge badge-green">Active</span>
+            </div>
+            <div class="pipeline-flow" id="pipelineFlow">
+              <div class="pipe-step done" data-step="1">
+                <div class="pipe-icon">📄</div>
+                <div class="pipe-label">Parse BRD</div>
+                <div class="pipe-status">Done</div>
+              </div>
+              <div class="pipe-connector"></div>
+              <div class="pipe-step done" data-step="2">
+                <div class="pipe-icon">🔍</div>
+                <div class="pipe-label">Extract Services</div>
+                <div class="pipe-status">Done</div>
+              </div>
+              <div class="pipe-connector"></div>
+              <div class="pipe-step active" data-step="3">
+                <div class="pipe-icon">🔌</div>
+                <div class="pipe-label">Match Adapters</div>
+                <div class="pipe-status">Running</div>
+              </div>
+              <div class="pipe-connector"></div>
+              <div class="pipe-step pending" data-step="4">
+                <div class="pipe-icon">⚙️</div>
+                <div class="pipe-label">Auto-Configure</div>
+                <div class="pipe-status">Pending</div>
+              </div>
+              <div class="pipe-connector"></div>
+              <div class="pipe-step pending" data-step="5">
+                <div class="pipe-icon">🧪</div>
+                <div class="pipe-label">Simulate</div>
+                <div class="pipe-status">Pending</div>
+              </div>
+              <div class="pipe-connector"></div>
+              <div class="pipe-step pending" data-step="6">
+                <div class="pipe-icon">🚀</div>
+                <div class="pipe-label">Deploy</div>
+                <div class="pipe-status">Pending</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card activity-card">
+            <div class="card-header">
+              <h3>Recent Activity</h3>
+              <button class="btn-link">View All</button>
+            </div>
+            <div class="activity-list" id="activityList">
+              <div class="activity-item">
+                <div class="activity-dot green"></div>
+                <div class="activity-text">
+                  <strong>Salesforce CRM adapter</strong> matched for BRD-2024-087
+                  <span class="activity-time">2m ago</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot blue"></div>
+                <div class="activity-text">
+                  <strong>Configuration template</strong> generated for AWS S3 v3
+                  <span class="activity-time">8m ago</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot yellow"></div>
+                <div class="activity-text">
+                  <strong>Simulation failed</strong> – Stripe Payments webhook timeout
+                  <span class="activity-time">14m ago</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot green"></div>
+                <div class="activity-text">
+                  <strong>SOW-2024-012</strong> parsed – 6 services extracted
+                  <span class="activity-time">23m ago</span>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot purple"></div>
+                <div class="activity-text">
+                  <strong>New adapter</strong> added: Twilio SMS v2.1
+                  <span class="activity-time">1h ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card chart-card">
+            <div class="card-header">
+              <h3>Integration Health Score</h3>
+              <span class="badge badge-cyan">Live</span>
+            </div>
+            <div class="health-metrics">
+              <div class="health-item">
+                <div class="health-label">API Uptime</div>
+                <div class="health-bar-wrap">
+                  <div class="health-bar" style="--val: 98.7%">
+                    <div class="health-fill indigo"></div>
+                  </div>
+                  <span class="health-val">98.7%</span>
+                </div>
+              </div>
+              <div class="health-item">
+                <div class="health-label">Config Accuracy</div>
+                <div class="health-bar-wrap">
+                  <div class="health-bar" style="--val: 94.2%">
+                    <div class="health-fill cyan"></div>
+                  </div>
+                  <span class="health-val">94.2%</span>
+                </div>
+              </div>
+              <div class="health-item">
+                <div class="health-label">Sim Pass Rate</div>
+                <div class="health-bar-wrap">
+                  <div class="health-bar" style="--val: 97.3%">
+                    <div class="health-fill violet"></div>
+                  </div>
+                  <span class="health-val">97.3%</span>
+                </div>
+              </div>
+              <div class="health-item">
+                <div class="health-label">Adapter Coverage</div>
+                <div class="health-bar-wrap">
+                  <div class="health-bar" style="--val: 86%">
+                    <div class="health-fill emerald"></div>
+                  </div>
+                  <span class="health-val">86%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card quickstart-card">
+            <div class="card-header">
+              <h3>Quick Actions</h3>
+            </div>
+            <div class="quick-actions">
+              <button class="quick-btn" onclick="switchModule('parser')">
+                <span>🧠</span>
+                <span>Parse New Document</span>
+              </button>
+              <button class="quick-btn" onclick="switchModule('registry')">
+                <span>📦</span>
+                <span>Browse Adapters</span>
+              </button>
+              <button class="quick-btn" onclick="switchModule('autoconfig')">
+                <span>⚙️</span>
+                <span>Generate Config</span>
+              </button>
+              <button class="quick-btn" onclick="switchModule('simulation')">
+                <span>🔬</span>
+                <span>Run Simulation</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== REQUIREMENT PARSER ===== -->
+      <section class="module" id="module-parser">
+        <div class="module-header">
+          <h1 class="module-title">Requirement <span class="highlight">Parsing Engine</span></h1>
+          <p class="module-subtitle">NLP-powered analysis of BRDs, API specs, and SOWs</p>
+        </div>
+
+        <div class="parser-layout">
+          <div class="card parser-input-card">
+            <div class="card-header">
+              <h3>📄 Document Input</h3>
+              <div class="doc-type-selector">
+                <button class="doc-type-btn active" data-type="BRD">BRD</button>
+                <button class="doc-type-btn" data-type="API">API Spec</button>
+                <button class="doc-type-btn" data-type="SOW">SOW</button>
+                <button class="doc-type-btn" data-type="OTHER">Other</button>
+              </div>
+            </div>
+            <div class="upload-zone" id="uploadZone">
+              <div class="upload-icon">📂</div>
+              <div class="upload-text">Drop your document here or <span class="link">browse files</span></div>
+              <div class="upload-sub">Supports PDF, DOCX, TXT, JSON, YAML</div>
+            </div>
+            <div class="or-divider"><span>OR</span></div>
+            <textarea class="doc-textarea" id="docTextarea" placeholder="Paste your requirement document text here...
+
+Example: 
+The system shall integrate with Salesforce CRM API v44 for customer data synchronization. Payment processing shall use Stripe API with webhook support. Optional: Twilio SMS notifications for order updates. The integration must support AWS S3 for document storage and retrieval."></textarea>
+            <div class="parser-actions">
+              <select class="select-field" id="parseTemplate">
+                <option value="">Load sample document...</option>
+                <option value="brd">Sample BRD – E-Commerce Platform</option>
+                <option value="api">Sample API Spec – Payment Gateway</option>
+                <option value="sow">Sample SOW – CRM Integration</option>
+              </select>
+              <button class="btn-primary" id="parseBtn" onclick="runParser()">
+                <span class="btn-icon-inner">🧠</span> Analyze Document
+              </button>
+            </div>
+          </div>
+
+          <div class="card parser-results-card" id="parserResults" style="display:none;">
+            <div class="card-header">
+              <h3>🔍 Analysis Results</h3>
+              <div class="confidence-badge">
+                <span class="conf-label">NLP Confidence</span>
+                <span class="conf-val" id="confVal">–</span>
+              </div>
+            </div>
+            <div class="results-tabs">
+              <button class="tab-btn active" data-tab="services">Services Detected</button>
+              <button class="tab-btn" data-tab="endpoints">Endpoints</button>
+              <button class="tab-btn" data-tab="entities">Entities</button>
+            </div>
+            <div class="tab-content active" id="tab-services">
+              <div class="services-list" id="servicesList"></div>
+            </div>
+            <div class="tab-content" id="tab-endpoints">
+              <div class="endpoints-list" id="endpointsList"></div>
+            </div>
+            <div class="tab-content" id="tab-entities">
+              <div class="entities-cloud" id="entitiesCloud"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card nlp-viz-card" id="nlpViz" style="display:none;">
+          <div class="card-header">
+            <h3>🧬 NLP Analysis Visualization</h3>
+          </div>
+          <div class="nlp-pipeline">
+            <div class="nlp-stage">
+              <div class="stage-icon">📝</div>
+              <div class="stage-name">Tokenization</div>
+              <div class="stage-detail" id="tokenCount">–</div>
+            </div>
+            <div class="nlp-arrow">→</div>
+            <div class="nlp-stage">
+              <div class="stage-icon">🏷️</div>
+              <div class="stage-name">NER Tagging</div>
+              <div class="stage-detail" id="nerCount">–</div>
+            </div>
+            <div class="nlp-arrow">→</div>
+            <div class="nlp-stage">
+              <div class="stage-icon">🗂️</div>
+              <div class="stage-name">Intent Classification</div>
+              <div class="stage-detail" id="intentType">–</div>
+            </div>
+            <div class="nlp-arrow">→</div>
+            <div class="nlp-stage">
+              <div class="stage-icon">🎯</div>
+              <div class="stage-name">Service Extraction</div>
+              <div class="stage-detail" id="serviceCount">–</div>
+            </div>
+            <div class="nlp-arrow">→</div>
+            <div class="nlp-stage">
+              <div class="stage-icon">⚖️</div>
+              <div class="stage-name">Priority Scoring</div>
+              <div class="stage-detail" id="priorityResult">–</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== INTEGRATION REGISTRY ===== -->
+      <section class="module" id="module-registry">
+        <div class="module-header">
+          <h1 class="module-title">Integration Registry & <span class="highlight">Hook Library</span></h1>
+          <p class="module-subtitle">Catalog of pre-built adapters with version management</p>
+        </div>
+
+        <div class="registry-toolbar">
+          <div class="search-bar reg-search">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search adapters..." id="adapterSearch" oninput="filterAdapters()" />
+          </div>
+          <div class="filter-group">
+            <select class="select-field" id="categoryFilter" onchange="filterAdapters()">
+              <option value="">All Categories</option>
+              <option value="CRM">CRM</option>
+              <option value="Payment">Payment</option>
+              <option value="Storage">Storage</option>
+              <option value="Messaging">Messaging</option>
+              <option value="Analytics">Analytics</option>
+              <option value="Auth">Auth</option>
+              <option value="Database">Database</option>
+            </select>
+            <select class="select-field" id="statusFilter" onchange="filterAdapters()">
+              <option value="">All Statuses</option>
+              <option value="stable">Stable</option>
+              <option value="beta">Beta</option>
+              <option value="deprecated">Deprecated</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="openAddAdapter()">+ New Adapter</button>
+        </div>
+
+        <div class="adapters-grid" id="adaptersGrid"></div>
+
+        <!-- Adapter Detail Modal -->
+        <div class="modal-overlay" id="adapterModal" style="display:none;">
+          <div class="modal-box">
+            <div class="modal-header">
+              <div class="modal-title-area">
+                <div class="adapter-modal-icon" id="modalIcon"></div>
+                <div>
+                  <h3 id="modalName"></h3>
+                  <span class="modal-version" id="modalVersion"></span>
+                </div>
+              </div>
+              <button class="modal-close" onclick="closeModal('adapterModal')">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-section">
+                <label>Version History</label>
+                <div class="version-timeline" id="versionTimeline"></div>
+              </div>
+              <div class="modal-section">
+                <label>Hook Lifecycle</label>
+                <div class="hook-lifecycle" id="hookLifecycle"></div>
+              </div>
+              <div class="modal-section">
+                <label>Configuration Schema</label>
+                <pre class="code-block" id="configSchema"></pre>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-secondary" onclick="closeModal('adapterModal')">Close</button>
+              <button class="btn-primary" onclick="configureAdapter()">Configure Adapter</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== AUTO-CONFIGURATION ===== -->
+      <section class="module" id="module-autoconfig">
+        <div class="module-header">
+          <h1 class="module-title">Auto-<span class="highlight">Configuration</span> Engine</h1>
+          <p class="module-subtitle">AI-driven field mapping, schema transformation, and diff comparison</p>
+        </div>
+
+        <div class="autoconfig-layout">
+          <div class="card autoconfig-setup">
+            <div class="card-header">
+              <h3>⚙️ Configuration Generator</h3>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Source System</label>
+                <select class="select-field" id="sourceSystem">
+                  <option value="">Select source...</option>
+                  <option value="salesforce">Salesforce CRM</option>
+                  <option value="hubspot">HubSpot</option>
+                  <option value="mysql">MySQL Database</option>
+                  <option value="postgres">PostgreSQL</option>
+                  <option value="rest">REST API</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Target System</label>
+                <select class="select-field" id="targetSystem">
+                  <option value="">Select target...</option>
+                  <option value="stripe">Stripe Payments</option>
+                  <option value="aws-s3">AWS S3</option>
+                  <option value="twilio">Twilio SMS</option>
+                  <option value="sendgrid">SendGrid Email</option>
+                  <option value="slack">Slack</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Integration Pattern</label>
+                <select class="select-field" id="integrationPattern">
+                  <option value="sync">Real-time Sync</option>
+                  <option value="batch">Batch Processing</option>
+                  <option value="event">Event-Driven</option>
+                  <option value="webhook">Webhook</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Auth Method</label>
+                <select class="select-field" id="authMethod">
+                  <option value="oauth2">OAuth 2.0</option>
+                  <option value="apikey">API Key</option>
+                  <option value="jwt">JWT Bearer</option>
+                  <option value="basic">Basic Auth</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary full-width" id="generateConfigBtn" onclick="generateConfig()">
+              <span>⚡</span> Generate Configuration
+            </button>
+          </div>
+
+          <div class="card field-mapping-card" id="fieldMappingCard" style="display:none;">
+            <div class="card-header">
+              <h3>🗺️ Field Mapping Suggestions</h3>
+              <span class="badge badge-cyan" id="mappingConfidence">AI: 91% confident</span>
+            </div>
+            <div class="mapping-table-wrap">
+              <table class="mapping-table">
+                <thead>
+                  <tr>
+                    <th>Source Field</th>
+                    <th>→</th>
+                    <th>Target Field</th>
+                    <th>Transform</th>
+                    <th>Confidence</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="mappingTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-output-area" id="configOutputArea" style="display:none;">
+          <div class="card config-yaml-card">
+            <div class="card-header">
+              <h3>📝 Generated Configuration</h3>
+              <div class="code-actions">
+                <button class="btn-sm" onclick="copyConfig()">📋 Copy</button>
+                <button class="btn-sm" onclick="downloadConfig()">⬇️ Download</button>
+                <select class="select-field-sm" id="configFormat" onchange="switchConfigFormat()">
+                  <option value="yaml">YAML</option>
+                  <option value="json">JSON</option>
+                  <option value="env">.env</option>
+                </select>
+              </div>
+            </div>
+            <pre class="config-code" id="configCode"></pre>
+          </div>
+
+          <div class="card diff-card">
+            <div class="card-header">
+              <h3>📊 Configuration Diff</h3>
+              <span class="badge badge-yellow">⚠️ 3 changes detected</span>
+            </div>
+            <div class="diff-legend">
+              <span class="diff-added">+ Added</span>
+              <span class="diff-removed">- Removed</span>
+              <span class="diff-changed">~ Modified</span>
+            </div>
+            <pre class="diff-view" id="diffView"></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SIMULATION & TESTING ===== -->
+      <section class="module" id="module-simulation">
+        <div class="module-header">
+          <h1 class="module-title">Simulation & <span class="highlight">Testing</span> Framework</h1>
+          <p class="module-subtitle">Mock API simulation, parallel testing, and rollback mechanisms</p>
+        </div>
+
+        <div class="sim-toolbar">
+          <div class="sim-controls">
+            <select class="select-field" id="simAdapter">
+              <option value="">Select adapter to test...</option>
+              <option value="salesforce">Salesforce CRM v44</option>
+              <option value="stripe">Stripe Payments v3</option>
+              <option value="aws-s3">AWS S3 v3</option>
+              <option value="twilio">Twilio SMS v2.1</option>
+            </select>
+            <select class="select-field" id="simScenario">
+              <option value="happy">Happy Path</option>
+              <option value="timeout">Timeout Scenario</option>
+              <option value="error">Error Response</option>
+              <option value="partial">Partial Failure</option>
+              <option value="ratelimit">Rate Limited</option>
+            </select>
+            <button class="btn-primary" id="runSimBtn" onclick="runSimulation()">
+              ▶ Run Simulation
+            </button>
+            <button class="btn-secondary" onclick="runParallelTest()">⚡ Parallel Test</button>
+          </div>
+        </div>
+
+        <div class="sim-layout">
+          <div class="card sim-request-card">
+            <div class="card-header">
+              <h3>📤 Mock Request</h3>
+              <div class="method-badge" id="simMethod">POST</div>
+            </div>
+            <div class="sim-url-bar">
+              <span class="url-prefix">https://api.example.com</span>
+              <span id="simEndpoint">/v44/sobjects/Contact</span>
+            </div>
+            <div class="sim-headers">
+              <div class="header-title">Headers</div>
+              <div class="header-rows" id="simHeaders">
+                <div class="header-row"><span>Authorization:</span><span>Bearer {token}</span></div>
+                <div class="header-row"><span>Content-Type:</span><span>application/json</span></div>
+                <div class="header-row"><span>X-Request-ID:</span><span id="reqId">req_abc123xyz</span></div>
+              </div>
+            </div>
+            <pre class="code-block" id="simRequestBody">{
+  "FirstName": "Jane",
+  "LastName": "Doe",
+  "Email": "jane.doe@example.com",
+  "Phone": "+1-555-0100"
+}</pre>
+          </div>
+
+          <div class="card sim-response-card">
+            <div class="card-header">
+              <h3>📥 Simulated Response</h3>
+              <div class="response-status" id="responseStatus">–</div>
+            </div>
+            <div class="response-meta" id="responseMeta" style="display:none;">
+              <span class="meta-item">⏱ <strong id="responseTime">–</strong></span>
+              <span class="meta-item">📦 <strong id="responseSize">–</strong></span>
+              <span class="meta-item">🔄 <strong id="responseRetries">0</strong> retries</span>
+            </div>
+            <pre class="code-block" id="simResponseBody">// Run a simulation to see the response</pre>
+          </div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="card test-results-card" id="testResultsCard" style="display:none;">
+          <div class="card-header">
+            <h3>📊 Test Results</h3>
+            <div class="test-summary" id="testSummary"></div>
+          </div>
+          <div class="test-cases" id="testCases"></div>
+        </div>
+
+        <!-- Rollback & Fallback -->
+        <div class="card rollback-card">
+          <div class="card-header">
+            <h3>⏪ Rollback & Fallback Mechanisms</h3>
+          </div>
+          <div class="rollback-versions" id="rollbackVersions">
+            <div class="version-snapshot">
+              <div class="snapshot-icon">📸</div>
+              <div class="snapshot-info">
+                <strong>v3.2.1</strong> – Current (Production)
+                <span class="snapshot-time">Active since Apr 1, 2026</span>
+              </div>
+              <span class="badge badge-green">Active</span>
+              <button class="btn-sm btn-disabled">Current</button>
+            </div>
+            <div class="version-snapshot">
+              <div class="snapshot-icon">📸</div>
+              <div class="snapshot-info">
+                <strong>v3.1.5</strong> – Stable Baseline
+                <span class="snapshot-time">Deployed Mar 12, 2026</span>
+              </div>
+              <span class="badge badge-blue">Stable</span>
+              <button class="btn-sm" onclick="rollbackTo('v3.1.5')">Rollback</button>
+            </div>
+            <div class="version-snapshot">
+              <div class="snapshot-icon">📸</div>
+              <div class="snapshot-info">
+                <strong>v2.9.0</strong> – Legacy
+                <span class="snapshot-time">Deployed Jan 5, 2026</span>
+              </div>
+              <span class="badge badge-yellow">Legacy</span>
+              <button class="btn-sm" onclick="rollbackTo('v2.9.0')">Rollback</button>
+            </div>
+          </div>
+          <div class="fallback-rules">
+            <h4>🔀 Fallback Strategy</h4>
+            <div class="fallback-rule-list">
+              <div class="fallback-rule">
+                <div class="rule-trigger">On Timeout (&gt;5s)</div>
+                <div class="rule-arrow">→</div>
+                <div class="rule-action">Use cached response</div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="slider"></span></label>
+              </div>
+              <div class="fallback-rule">
+                <div class="rule-trigger">On 5xx Error</div>
+                <div class="rule-arrow">→</div>
+                <div class="rule-action">Retry with exponential backoff</div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="slider"></span></label>
+              </div>
+              <div class="fallback-rule">
+                <div class="rule-trigger">On Auth Failure</div>
+                <div class="rule-arrow">→</div>
+                <div class="rule-action">Auto-refresh token</div>
+                <label class="toggle-switch"><input type="checkbox" /><span class="slider"></span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== AUDIT LOGS ===== -->
+      <section class="module" id="module-logs">
+        <div class="module-header">
+          <h1 class="module-title">Audit <span class="highlight">Logs</span></h1>
+          <p class="module-subtitle">Complete history of all orchestration events</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>📋 System Event Log</h3>
+            <div class="log-filters">
+              <select class="select-field" id="logLevelFilter" onchange="filterLogs()">
+                <option value="">All Levels</option>
+                <option value="INFO">INFO</option>
+                <option value="WARN">WARN</option>
+                <option value="ERROR">ERROR</option>
+                <option value="SUCCESS">SUCCESS</option>
+              </select>
+              <button class="btn-sm" onclick="clearLogs()">🗑 Clear</button>
+            </div>
+          </div>
+          <div class="log-terminal" id="logTerminal"></div>
+        </div>
+      </section>
+
+    </div><!-- /module-container -->
+  </main>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Add Adapter Modal -->
+  <div class="modal-overlay" id="addAdapterModal" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>➕ Register New Adapter</h3>
+        <button class="modal-close" onclick="closeModal('addAdapterModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Adapter Name</label>
+          <input type="text" class="input-field" id="newAdapterName" placeholder="e.g. Zendesk CRM" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select class="select-field" id="newAdapterCategory">
+            <option value="CRM">CRM</option>
+            <option value="Payment">Payment</option>
+            <option value="Storage">Storage</option>
+            <option value="Messaging">Messaging</option>
+            <option value="Analytics">Analytics</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Version</label>
+          <input type="text" class="input-field" id="newAdapterVersion" placeholder="e.g. v1.0.0" />
+        </div>
+        <div class="form-group">
+          <label>Base URL</label>
+          <input type="text" class="input-field" id="newAdapterUrl" placeholder="https://api.example.com/v1" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('addAdapterModal')">Cancel</button>
+        <button class="btn-primary" onclick="addNewAdapter()">Register Adapter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rollback Confirmation Modal -->
+  <div class="modal-overlay" id="rollbackModal" style="display:none;">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <h3>⏪ Confirm Rollback</h3>
+        <button class="modal-close" onclick="closeModal('rollbackModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="warning-msg">
+          ⚠️ You are about to rollback to <strong id="rollbackVersionLabel"></strong>. This will revert all production configurations to that snapshot.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('rollbackModal')">Cancel</button>
+        <button class="btn-danger" onclick="confirmRollback()">Confirm Rollback</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
